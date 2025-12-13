@@ -1,0 +1,22 @@
+server:
+  port: 8182
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${ORDER_DB_URL:jdbc:mysql://localhost:3306/order_db?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+    username: ${ORDER_DB_USER:demo}
+    password: ${ORDER_DB_PASSWORD:demo}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+txdemo:
+  rocketmq:
+    namesrv: ${ROCKETMQ_NAMESRV:localhost:9876}
+    topic: ${ROCKETMQ_TOPIC:txdemo-saga}
+    producer-group: ${ROCKETMQ_PRODUCER_GROUP:order-service-producer}
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:order-service-consumer}
+

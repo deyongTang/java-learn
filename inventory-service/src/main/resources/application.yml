@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: inventory-service
+  datasource:
+    url: ${INVENTORY_DB_URL:jdbc:mysql://localhost:3306/inventory_db?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+    username: ${INVENTORY_DB_USER:demo}
+    password: ${INVENTORY_DB_PASSWORD:demo}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+txdemo:
+  rocketmq:
+    namesrv: ${ROCKETMQ_NAMESRV:localhost:9876}
+    topic: ${ROCKETMQ_TOPIC:txdemo-saga}
+    producer-group: ${ROCKETMQ_PRODUCER_GROUP:inventory-service-producer}
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:inventory-service-consumer}
+  redis:
+    address: ${REDIS_ADDRESS:redis://localhost:6379}
+
