@@ -6,8 +6,8 @@ spring:
     name: order-service
   datasource:
     url: ${ORDER_DB_URL:jdbc:mysql://localhost:3306/order_db?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
-    username: ${ORDER_DB_USER:demo}
-    password: ${ORDER_DB_PASSWORD:demo}
+    username: ${ORDER_DB_USER:root}
+    password: ${ORDER_DB_PASSWORD:123456}
   sql:
     init:
       mode: always
@@ -15,7 +15,7 @@ spring:
 
 txdemo:
   rocketmq:
-    namesrv: ${ROCKETMQ_NAMESRV:localhost:9876}
+    namesrv: ${ROCKETMQ_NAMESRV:192.168.0.100:9876}
     topic: ${ROCKETMQ_TOPIC:txdemo-saga}
     producer-group: ${ROCKETMQ_PRODUCER_GROUP:order-service-producer}
     consumer-group: ${ROCKETMQ_CONSUMER_GROUP:order-service-consumer}

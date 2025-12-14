@@ -5,6 +5,11 @@ services:
     container_name: rocketmq-namesrv
     ports:
       - "9876:9876"
+    environment:
+      - RMQ_NAMESRV_XMS=32m
+      - RMQ_NAMESRV_XMX=32m
+      - RMQ_NAMESRV_XMN=16m
+      - RMQ_NAMESRV_DIRECT_MEM=32m
     volumes:
       - ./bin/runserver.sh:/home/rocketmq/rocketmq-4.9.7/bin/runserver.sh:ro
       - ./data/namesrv/logs:/home/rocketmq/logs
@@ -22,6 +27,11 @@ services:
     ports:
       - "10911:10911"
       - "10909:10909"
+    environment:
+      - RMQ_BROKER_XMS=64m
+      - RMQ_BROKER_XMX=64m
+      - RMQ_BROKER_XMN=32m
+      - RMQ_BROKER_DIRECT_MEM=64m
     volumes:
       - ./bin/runbroker.sh:/home/rocketmq/rocketmq-4.9.7/bin/runbroker.sh:ro
       - ./data/broker/logs:/home/rocketmq/logs
@@ -40,7 +50,7 @@ services:
     ports:
       - "18080:8082"
     environment:
-      - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876 -Xms64m -Xmx128m -XX:MaxMetaspaceSize=96m
     networks:
       - rocketmq
     restart: unless-stopped

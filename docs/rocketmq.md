@@ -25,7 +25,12 @@ docker logs -n 50 rocketmq-broker
 ## 客户端连接信息（宿主机上跑 Java）
 - NameServer：`127.0.0.1:9876`
 
-> 说明：Broker 配置里设置了 `brokerIP1=host.docker.internal`，既方便宿主机访问，也方便 Dashboard（容器内）访问。
+> 说明：Broker 配置里设置了 `brokerIP1=host.docker.internal`，既方便 Dashboard（容器内）访问，也方便宿主机通过端口映射访问。
+>
+> 如果你在宿主机跑的 Java 客户端出现 `sendDefaultImpl call timeout`，常见原因是 **宿主机无法解析 `host.docker.internal`**（某些环境/Colima 下默认不提供该域名）。
+> - 方案 A（推荐）：给宿主机加 hosts 映射：`127.0.0.1 host.docker.internal`
+> - 方案 B：把 `docker/rocketmq/conf/broker.conf` 里的 `brokerIP1` 改成宿主机可达的 IP（例如 `127.0.0.1`，但这会影响容器内 Dashboard 直连 Broker）
+> - 改完后重启 RocketMQ：`docker compose -f docker/rocketmq/compose.yml up -d`
 
 ## 停止与清理
 停止：
