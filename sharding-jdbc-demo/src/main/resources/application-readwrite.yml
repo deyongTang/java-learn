@@ -1,0 +1,58 @@
+spring:
+  sql:
+    init:
+      # 初始化示例表结构。
+      mode: always
+      schema-locations: classpath:schema.sql
+  shardingsphere:
+    datasource:
+      # 读写分离数据源示例。
+      names: write_ds,read_ds_0
+      write_ds:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:h2:mem:rw;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        username: sa
+        password: ""
+      read_ds_0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:h2:mem:rw;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        username: sa
+        password: ""
+    rules:
+      readwrite-splitting:
+        data-sources:
+          rw_ds:
+            type: Static
+            props:
+              # 写库名称。
+              write-data-source-name: write_ds
+              # 读库列表。
+              read-data-source-names: read_ds_0
+            load-balancer-name: round_robin
+        load-balancers:
+          round_robin:
+            # 轮询读负载。
+            type: ROUND_ROBIN
+      sharding:
+        tables:
+          t_order:
+            # 逻辑表映射到读写分离数据源下的分表。
+            actual-data-nodes: rw_ds.t_order_$->{0..1}
+            table-strategy:
+              standard:
+                # 分表键：order_id。
+                sharding-column: order_id
+                sharding-algorithm-name: order-inline
+        sharding-algorithms:
+          order-inline:
+            type: INLINE
+            props:
+              # 按 order_id 取模路由到表。
+              algorithm-expression: t_order_$->{order_id % 2}
+    props:
+      # 打印实际路由 SQL。
+      sql-show: true
+
+server:
+  # 示例端口。
+  port: 8081

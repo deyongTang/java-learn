@@ -1,0 +1,54 @@
+spring:
+  sql:
+    init:
+      # 初始化示例表结构。
+      mode: always
+      schema-locations: classpath:schema.sql
+  shardingsphere:
+    datasource:
+      # 双数据源示例。
+      names: ds0,ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:h2:mem:ds0;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        username: sa
+        password: ""
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:h2:mem:ds1;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        username: sa
+        password: ""
+    rules:
+      sharding:
+        tables:
+          t_order:
+            # 逻辑表映射到多库多表。
+            actual-data-nodes: ds$->{0..1}.t_order_$->{0..1}
+            database-strategy:
+              standard:
+                # 分库键：user_id。
+                sharding-column: user_id
+                sharding-algorithm-name: db-inline
+            table-strategy:
+              standard:
+                # 分表键：order_id。
+                sharding-column: order_id
+                sharding-algorithm-name: order-inline
+        sharding-algorithms:
+          db-inline:
+            type: INLINE
+            props:
+              # 按 user_id 取模路由到库。
+              algorithm-expression: ds$->{user_id % 2}
+          order-inline:
+            type: INLINE
+            props:
+              # 按 order_id 取模路由到表。
+              algorithm-expression: t_order_$->{order_id % 2}
+    props:
+      # 打印实际路由 SQL。
+      sql-show: true
+
+server:
+  # 示例端口。
+  port: 8081

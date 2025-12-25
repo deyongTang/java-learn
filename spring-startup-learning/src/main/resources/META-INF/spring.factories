@@ -1,0 +1,12 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.example.springstartup.trace.TraceEnvironmentPostProcessor
+
+org.springframework.boot.SpringApplicationRunListener=\
+com.example.springstartup.trace.TraceSpringApplicationRunListener
+
+org.springframework.context.ApplicationListener=\
+com.example.springstartup.trace.TraceEarlyApplicationListener
+
+org.springframework.context.ApplicationContextInitializer=\
+com.example.springstartup.trace.TraceApplicationContextInitializer
+

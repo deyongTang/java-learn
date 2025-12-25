@@ -1,0 +1,40 @@
+spring:
+  sql:
+    init:
+      # 初始化示例表结构。
+      mode: always
+      schema-locations: classpath:schema.sql
+  shardingsphere:
+    datasource:
+      # 单数据源示例。
+      names: ds0
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:h2:mem:ds0;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+        username: sa
+        password: ""
+    rules:
+      sharding:
+        tables:
+          t_order:
+            # 逻辑表映射到真实表。
+            actual-data-nodes: ds0.t_order_$->{0..1}
+            table-strategy:
+              standard:
+                # 分片键，用于表路由。
+                sharding-column: order_id
+                sharding-algorithm-name: order-spi
+        sharding-algorithms:
+          order-spi:
+            # SPI 自定义分表算法。
+            type: ORDER_TABLE_SPI
+            props:
+              # 参与取模的分表数量。
+              table-count: 2
+    props:
+      # 打印实际路由 SQL。
+      sql-show: true
+
+server:
+  # 示例端口。
+  port: 8081
