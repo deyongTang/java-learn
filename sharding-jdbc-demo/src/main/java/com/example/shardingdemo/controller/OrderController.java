@@ -2,6 +2,7 @@ package com.example.shardingdemo.controller;
 
 import com.example.shardingdemo.domain.Order;
 import com.example.shardingdemo.service.OrderService;
+import com.example.shardingdemo.trace.TraceIdHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,13 @@ public class OrderController {
     public List<Order> findByUserId(@RequestParam long userId,
                                     @RequestParam(defaultValue = "10") int limit) {
         return orderService.findByUserId(userId, limit);
+    }
+
+    @GetMapping("/trace-demo")
+    public String traceDemo() {
+        String traceId = TraceIdHolder.get();
+        orderService.asyncTraceDemo();
+        return "traceId=" + traceId;
     }
 
     public static class CreateOrderRequest {

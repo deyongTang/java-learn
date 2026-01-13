@@ -37,3 +37,37 @@ spring:
 server:
   # 示例端口。
   port: 8081
+
+# OpenAPI JOSE（JWS + JWE）示例配置：
+# - 默认关闭；开启后，POST/PUT/PATCH 且 Content-Type=application/jose 的请求会先解密验签，再把解密后的 JSON 交给 Controller。
+# - 响应默认也会加密（Content-Type=application/jose），仅对 2xx/3xx 生效；4xx/5xx 默认返回明文 JSON 便于排错。
+#
+#openapi:
+#  jose:
+#    enabled: true
+#    server-id: sharding-demo
+#    audience: openapi-gateway
+#    server-kid: server-demo-202601
+#    # PEM 方式（二选一：pem 或 location）
+#    #server-private-key-pem: |-
+#    #  -----BEGIN PRIVATE KEY-----
+#    #  ...
+#    #  -----END PRIVATE KEY-----
+#    #server-public-key-pem: |-
+#    #  -----BEGIN PUBLIC KEY-----
+#    #  ...
+#    #  -----END PUBLIC KEY-----
+#    # 或者 location 方式（classpath:/file:/绝对路径）
+#    #server-private-key-location: classpath:keys/server-private.pem
+#    #server-public-key-location: classpath:keys/server-public.pem
+#    response:
+#      encrypt: true
+#      ttl: 5m
+#    clients:
+#      - client-id: clientA
+#        kid: clientA-key-202601
+#        #public-key-pem: |-
+#        #  -----BEGIN PUBLIC KEY-----
+#        #  ...
+#        #  -----END PUBLIC KEY-----
+#        public-key-location: classpath:keys/clientA-public.pem

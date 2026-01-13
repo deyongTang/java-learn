@@ -2,6 +2,10 @@ package com.example.shardingdemo.service;
 
 import com.example.shardingdemo.domain.Order;
 import com.example.shardingdemo.repository.OrderRepository;
+import com.example.shardingdemo.trace.TraceIdHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,6 +16,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepository orderRepository;
     private final AtomicLong idGenerator = new AtomicLong(1000);
@@ -33,5 +39,11 @@ public class OrderService {
 
     public List<Order> findByUserId(long userId, int limit) {
         return orderRepository.findByUserId(userId, limit);
+    }
+
+    @Async("traceExecutor")
+    public void asyncTraceDemo() {
+        String traceId = TraceIdHolder.get();
+        log.info("async traceId={}", traceId);
     }
 }
